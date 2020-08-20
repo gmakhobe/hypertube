@@ -1,0 +1,35 @@
+
+    <!-- partial:header -->
+    <%- include ('admin/admin-header.ejs') %>
+<div class="container-scroller">
+    <!-- partial:top nav bar -->
+    <%- include ('admin/top-nav.ejs') %>
+    <div class="container-fluid page-body-wrapper">
+            <!-- partial:top side bar -->
+        <%- include ('admin/side-nav.ejs') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+                <div class="col-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                          <div class="row">
+                            <div class="col-md-8">
+                              <p>images here</p>
+                            </div>
+                            <div class="col-md-4">
+                                <h4 class="card-title">Name, Age</h4>
+                            </div>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            <%- include ('admin/admin-footer.ejs') %>
+          </div>
+    </div>
+</div>
+
+<%- include ('admin/load-scripts.ejs') %>
+    
+  </body>
+</html>

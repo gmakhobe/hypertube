@@ -1,0 +1,307 @@
+
+    <!-- partial:header -->
+    <%- include ('admin/admin-header.ejs') %>
+<div class="container-scroller">
+    <!-- partial:top nav bar -->
+    <%- include ('admin/top-nav.ejs') %>
+    <div class="container-fluid page-body-wrapper">
+            <!-- partial:top side bar -->
+        <%- include ('admin/side-nav.ejs') %>
+        <div class="main-panel">
+          <div class="content-wrapper">
+            <div class="col-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Profile</h4>
+                  <div class="forms-sample">
+                    <div class="form-group row">
+
+                      <div class="col-sm-6">
+
+                        <div class="form-group">
+                          <label for="firstname" class="col-form-label">First Name</label>
+                          <input type="text" class="form-control" id="firstname" placeholder="First Name">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="lastname" class="col-form-label">Last Name</label>
+                          <input type="text" class="form-control" id="lastname" placeholder="lastname">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Gender:</label>
+                          <select class="form-control" id="gender">
+                              <option value="Male">Male</option>
+                              <option value="Female">Female</option>
+                              <option value="none">none</option>
+                          </select>
+                        </div>
+                      
+                      </div>
+
+                      <div class="col-sm-6">
+                        
+                        <div class="form-group">
+                          <label for="education" class="col-form-label">Education</label>
+                          <input type="text" class="form-control" id="education" placeholder="lastname">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="jobtitle" class="col-form-label">Job Title</label>
+                          <input type="text" class="form-control" id="jobtitle" placeholder="lastname">
+                        </div>
+
+                        <div class="form-group">
+                          <label for="biography" class="col-form-label">Biography</label>
+                          <textarea class="form-control" id="biography" cols="4"></textarea>
+                        </div>
+
+                      </div>
+                      
+                    </div>
+                      
+                      <button type="submit" class="btn btn-gradient-success mr-2">Save</button>
+                      <a href="#content-box-2" class="btn btn-gradient-info mr-2">Next</a>
+                      
+                      <br/>
+                      <br/>
+
+                      <div id="content-box-2">
+                        <h4 class="card-title">List of Interest</h4>
+
+                        <div class="row">
+
+                          <div class="col-sm-6">
+
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-1"> Food <i class="input-helper"></i></label>
+                            </div>
+  
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-2"> Music <i class="input-helper"></i></label>
+                            </div>
+  
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-3">Reading <i class="input-helper"></i></label>
+                            </div>
+
+                          </div>
+
+                          <div class="col-sm-6">
+
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-4"> Sports <i class="input-helper"></i></label>
+                            </div>
+  
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-5"> ART <i class="input-helper"></i></label>
+                            </div>
+  
+                            <div class="form-check form-check-flat form-check-primary">
+                              <label class="form-check-label">
+                              <input type="checkbox" class="form-check-input" id="e-check-6"> Pets <i class="input-helper"></i></label>
+                            </div>
+  
+                          </div>
+
+                        </div>
+
+                        <button type="submit" class="btn btn-gradient-success mr-2">Save</button>
+                        <a href="#content-box-3" class="btn btn-gradient-info mr-2">Next</a>
+
+                      </div>
+
+                      <br/>
+                      <br/>
+
+                      <div id="content-box-3">
+                        <h4 class="card-title">Change Password</h4>
+
+                        <div class="form-group">
+                          <label>Password:</label>
+                          <input type="password" class="form-control form-control-lg" id="e-password"  placeholder="Password">
+                        </div>
+
+                        <div class="form-group">
+                          <label>Confirm Password:</label>
+                          <input type="password" class="form-control form-control-lg" id="e-password2"  placeholder="Confirm Password">
+                        </div>
+
+                        <button type="submit" class="btn btn-gradient-success mr-2">Save</button>
+                        <a href="#content-box-4" class="btn btn-gradient-info mr-2">Next</a>
+                      </div>
+
+                      <br/>
+                      <br/>
+
+                      <div id="content-box-4">
+                        <h4 class="card-title">Profile Pictures</h4>
+
+                      <table class="table table-responsive-sm table-striped table-hover">
+                      <thead>
+                        <tr>
+                          <th> User Profile </th>
+                          <th> Status </th>
+                          <th> Upload </th>
+                          <th> Action </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+                        
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        <tr>
+                          <td class="py-1">
+                            <img src="/images/profile.svg" alt="image">
+                          </td>
+                          <td> Upload Status </td>
+                          <td> 
+                            <div class="form-check form-check-flat form-check-primary">
+                              <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                              </div>
+                          </div>
+                         </td>
+                         <td>  
+                          <button type="button" class="btn btn-link btn-rounded btn-fw">Upload</button>
+                         </td>
+                        </tr>
+
+                        
+
+                      </tbody>
+                    </table>
+                    
+                    <br/>
+                    <br/>
+
+                        <button type="submit" class="btn btn-gradient-success mr-2">Save</button>
+                        <a href="#content-box-3" class="btn btn-gradient-info mr-2">Next</a>
+
+                      </div>
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            <%- include ('admin/admin-footer.ejs') %>
+          </div>
+    </div>
+</div>
+<%- include ('admin/load-scripts.ejs') %>
+  </body>
+</html>
