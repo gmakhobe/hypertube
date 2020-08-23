@@ -1,5 +1,6 @@
 const validator = require("../assets/validators");
 const orm = require("../model/orm-model");
+const passport = require("passport");
 
 const AppName = "Hypertube";
 //Controller method for / page
@@ -44,4 +45,21 @@ exports.Verify = (req, res) => {
             res.render('verify', { title: AppName, status: 1, message: "An error occured, email address not varified!" });
         });
     }
+}
+
+exports.LoginCB = (req, res) => {
+    passport.authenticate(42, { session: false }, (err, user, info) => {
+
+      if (err) {
+        console.error(err)
+        return res.send(user);
+      }
+      if (!user)
+        return res.send(user);
+
+    console.log(user);
+    return res.send(user);
+    });
+    console.log(req);
+    return res.send("loaded");
 }

@@ -45,8 +45,6 @@ exports.Register = (req, res) => {
     //Capturing info user posted
     const name = validator.makeNoun(req.body.firstname);
     const surname = validator.makeNoun(req.body.lastname);
-    const date = req.body.dateofbirth;
-    const gender = req.body.gender;
     const username = req.body.username;
     const email = req.body.email;
     const password = req.body.password;
@@ -78,8 +76,8 @@ exports.Register = (req, res) => {
         //Hash the password
         bcrypt.hash(password, salt, (error, hash) => {
             //Generate custome hash 
-            const customHash = hash.substring(0, 4) + hash.substring(hash.length - 5, hash.length - 1);
-            const sql = `INSERT INTO Users(FirstName, LastName, Gender, DateofBirth, Username, EmailAddress, Passcode, CustomHash, Active) VALUES ("${name}", "${surname}", "${gender}", "${date}", "${username}","${email}", "${hash}", "${customHash + username}", ${0})`;
+            const customHash = Math.floor((Math.random * 999999999) + 100000000);
+            const sql = `INSERT INTO Users(FirstName, LastName, Username, EmailAddress, Passcode, CustomHash, Active) VALUES ("${name}", "${surname}", "${username}","${email}", "${hash}", "${customHash + username}", ${0})`;
 
             orm.INSERT(sql)
             .then(message => {
@@ -162,6 +160,9 @@ exports.Login = (req, res) => {
                         .then(token => {
                             //Add token to our object
                             userData.Token = token;
+                            req.session.user = {
+                                id: email
+                            };
                             //delete properties in an object
                             delete userData.UserId;
                             delete userData.Active;

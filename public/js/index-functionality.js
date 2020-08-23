@@ -5,8 +5,8 @@
  *  DO NOT INCLUDE ANY OF THE Backend FEATURES AS THEY WILL BREAK THE CODE.
  * 
  * 
- */
-
+ *
+*/
 //Login User Function
 function UserLogin(){
     //Get input from login page
@@ -22,7 +22,7 @@ function UserLogin(){
         return ;
     }
     //Fetch Api to send a request
-    fetch('http://localhost:5001/Login', {
+    fetch('/Login', {
         method: 'post',
         headers: {
             "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
@@ -41,8 +41,8 @@ function UserLogin(){
         //if ststus is true print success and locate to a different page else print error
         if (res.status){
             alert(res.message);
-            localStorage.setItem('output', JSON.stringify(res.output));
-            location.assign("/User/encounter");
+            //localStorage.setItem('output', JSON.stringify(res.output));
+            location.assign("/User/Profile");
         }else{
             alert(res.message);
         }
@@ -59,17 +59,17 @@ function UserRegister(){
     //Get input from registration page
     const name = document.getElementById("firstname").value;
     const surname = document.getElementById("lastname").value;
-    const dateofbirth = document.getElementById("dateofbirth").value;
-    const gender = document.getElementById("gender").value;
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmpasword = document.getElementById("password2").value;
-    const reqbody = `firstname=${name}&lastname=${surname}&dateofbirth=${dateofbirth}&gender=${gender}&username=${username}&email=${email}&password=${password}`;
+
+    const reqbody = `firstname=${name}&lastname=${surname}&username=${username}&email=${email}&password=${password}`;
+    
     const btnReg = document.getElementById('btnRegister');
     //Hide after click
     btnReg.style.display = "none";
-    if (!name || !surname || !dateofbirth || !gender || !username || !email || !password || !confirmpasword){
+    if (!name || !surname || !username || !email || !password || !confirmpasword){
         alert("All fields are required");
         btnReg.style.display = "block";
         return ;
@@ -80,7 +80,7 @@ function UserRegister(){
         return ;
     }
     //Fetch Api to send a request
-    fetch('http://localhost:5001/register', {
+    fetch('/register', {
         method: 'post',
         headers: {
             "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"

@@ -18,16 +18,20 @@
                             <label>Password:</label>
                             <input type="password" class="form-control form-control-lg" id="password" placeholder="Password">
                         </div>
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" onclick="UserLogin()" id="btnLogin">SIGN IN</button>
-                        </div>
                         <div class="my-2 d-flex justify-content-between align-items-center">
                             <div class="form-check">
                                 <label class="form-check-label text-muted">
-                        <input type="checkbox" class="form-check-input"> Keep me signed in </label>
+                                <input type="checkbox" class="form-check-input"> Keep me signed in </label>
                             </div>
                             <a a href="/forgotpassword" class="auth-link text-black">Forgot password?</a>
                         </div>
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" onclick="UserLogin()" id="btnLogin">SIGN IN</button>
+                        </div>
+                        <form action="/api/login/42" method="get" class="mt-3">
+                            <button type="submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn" onclick="btnIntra42()"><img src="https://signin.intra.42.fr/assets/42_logo-7dfc9110a5319a308863b96bda33cea995046d1731cebb735e41b16255106c12.svg" width="25" height="25"/> SIGN IN</button>
+                        </form>
+                        
                         <div class="text-center mt-4 font-weight-light"> Don't have an account? <a href="/register" class="text-primary">Create</a>
                         </div>
                     </div>
@@ -37,3 +41,8 @@
     </div>
 </div>
 <%- include ('layouts/main-footer.ejs') %>
+
+<!--
+
+    https://api.intra.42.fr/oauth/authorize?client_id=1b466366a0237a8ca12899d5d49200dc380036d3ce1c495fa319fede4ed270cf&redirect_uri=http%3A%2F%2Flocalhost%3A5001%2Fintra42&scope=profile&state=f9f4e4bafacfd0ee0aa02bf16c486196c8d5dc8d86708b10ccccb35be5600d1c&response_type=code
+-->

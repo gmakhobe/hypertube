@@ -2,10 +2,10 @@ const mysql = require('mysql');
 
   //Create Pool Connection
 const pool = mysql.createPool({  
-  host: "remotemysql.com",
-  user: "Mp7kXc7jx7",
-  password: "n45BSAzqyA",
-  database: "Mp7kXc7jx7"
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "HypertubeApp"
 });
 
 exports.dbCon = () => {

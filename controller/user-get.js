@@ -20,7 +20,7 @@ exports.Settings = (req, res) => {
 }
 //Controller method for /profile page
 exports.Profile = (req, res) => {
-    res.render('profile', { title: 'Matcha' });
+    res.render('Storage/profile', { title: 'Matcha' });
 }
 //Controller method for /preference page
 exports.Preference = (req, res) => {
