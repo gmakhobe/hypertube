@@ -8,6 +8,7 @@ router.get('/', controllerIndexGet.Index);
 router.get('/login', controllerIndexGet.Login);
 router.get('/register', controllerIndexGet.Register);
 router.get('/forgotpassword', controllerIndexGet.ForgotPassword);
+router.get('/PasswordReset/:customHash', controllerIndexGet.PasswordReset);
 router.get('/verify/token/:token', controllerIndexGet.Verify);
 // Post Method for pages under /
 router.post('/register', controllerIndexPost.Register);

@@ -17,9 +17,12 @@ exports.Register = (req, res) => {
 }
 //Controller method for /forgotpassword page
 exports.ForgotPassword = (req, res) => {
-    res.render('forgotpassword', { title: AppName });
+    res.render('forgotpassword', { title: AppName, success:0 });
 }
-
+//Controller method for /PasswordReset page
+exports.PasswordReset = (req, res) => {
+    res.render('passwordreset', { title: AppName });
+}
 exports.Verify = (req, res) => {
     if (!validator.isObjEmpty(!req.params))
         res.render('verify', { title: AppName, status: 0, message: "An error occured, email address not varified!" });

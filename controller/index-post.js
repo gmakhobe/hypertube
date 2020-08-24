@@ -3,42 +3,27 @@ const bcrypt = require('bcryptjs');
 const validator = require("../assets/validators");
 const orm = require("../model/orm-model");
 
+const AppName = "Hypertube";
+
 let userData; // Will store user data obtain from login
 
 exports.ForgotPassword = (req, res) => {
     const email = req.body.email;
-    const sql = "SELECT FirstName,EmailAddress,Passcode FROM Users WHERE EmailAddress = '"+email+"'"; 
 
-    try{
-        if(!validator.isEmail(email)){
-            console.log("Email Field is empty");
-            res.redirect('/forgotpassword');
+    orm.SELECT(`SELECT * FROM Users WHERE EmailAddress = "${email}";`)
+    .then(data0 => {
+        if(!validator.isObjEmpty(data0[0])){
+            const sendMailMessage = `Hi ${data0[0]['FirstName']}, Here is a link to reset your password <a href="http://localhost:5001/PasswordReset/${data0[0]['CustomHash']}">http://localhost:5001/PasswordReset/${data0[0]['CustomHash']}</a>`;
+            mailers.sendMail(email, "Reset Password", sendMailMessage);
+
+            return res.render('forgotpassword', { title: AppName, success: 1 });
+        }else{
+            return res.render('forgotpassword', { title: AppName, success: -1 });
         }
-        else{
-            /*dbcon.query(sql, (err, res) => {
-                // Start Close DB Connection
-                dbcon.end((error2) => {
-                    console.log("Closing DB Connection: " + error2);
-                });
-                // End Close DB Connection
-                if(err)
-                { 
-                    throw err;
-                }
-                else
-                {
-                    retrievePassword(res[0].firstname, res[0].email, res[0].password);
-                }
-            });*/
-        }
-    }catch(error){
-        // Start Close DB Connection
-        /*dbcon.end((error2) => {
-            console.log("Closing DB Connection: " + error2);
-        });
-        // End Close DB Connection
-        res.redirect('/forgotpassword');*/
-    }
+    })
+    .catch(data0 => {
+        res.render('forgotpassword', { title: AppName, success: 0 });
+    })
 }
 //Is called when a user register
 exports.Register = (req, res) => {
