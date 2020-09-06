@@ -1,15 +1,26 @@
 --Create table first
-CREATE DATABASE Hypertube;
+CREATE DATABASE HypertubeApp;
 
 --Create Table
-CREATE TABLE Users(
-    UserID BIGINT AUTO_INCREMENT PRIMARY KEY,
-    FirstName VARCHAR(100),
-    LastName VARCHAR(100),
-    Username VARCHAR(100) UNIQUE, 
-    EmailAddress VARCHAR(100) UNIQUE,
-    Passcode VARCHAR(150),
-    CustomHash VARCHAR(200),
-    Active INT,
-    IntraID VARCHAR(50) UNIQUE
-    ); 
+CREATE TABLE `Users` (
+  `UserID` bigint(20) NOT NULL,
+  `FirstName` varchar(100) DEFAULT NULL,
+  `LastName` varchar(100) DEFAULT NULL,
+  `Username` varchar(100) DEFAULT NULL,
+  `EmailAddress` varchar(100) DEFAULT NULL,
+  `Passcode` varchar(150) DEFAULT NULL,
+  `CustomHash` varchar(200) DEFAULT NULL,
+  `Active` int(11) DEFAULT NULL,
+  `IntraID` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Indexes for table `Users`
+--
+ALTER TABLE `Users`
+  ADD PRIMARY KEY (`UserID`),
+  ADD UNIQUE KEY `Username` (`Username`),
+  ADD UNIQUE KEY `EmailAddress` (`EmailAddress`),
+  ADD UNIQUE KEY `IntraID` (`IntraID`);
+
+

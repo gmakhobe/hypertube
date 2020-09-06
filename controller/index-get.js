@@ -1,6 +1,7 @@
 const validator = require("../assets/validators");
 const orm = require("../model/orm-model");
 const passport = require("passport");
+const bcrypt = require('bcryptjs');
 
 const AppName = "Hypertube";
 //Controller method for / page
@@ -21,8 +22,34 @@ exports.ForgotPassword = (req, res) => {
 }
 //Controller method for /PasswordReset page
 exports.PasswordReset = (req, res) => {
-    res.render('passwordreset', { title: AppName });
+    res.render('passwordreset', { title: AppName, customHash: req.params.customHash });
 }
+//Controller method for /passwordreset/change route
+exports.PasswordChange = (req, res) => {
+    
+    if (validator.isObjEmpty(req.body)){
+        res.redirect('/login');
+    }else{
+        const password = req.body.password;
+        const customHash = req.body.customHash;
+        //Generate Salt
+        bcrypt.genSalt(10, (error, salt) => {
+            //Generate Hash
+            bcrypt.hash(password, salt, (error, hash) => {
+                //Call ORM to update
+                orm.UPDATE(`UPDATE Users SET Passcode = "${hash}" WHERE CustomHash = "${customHash}"`)
+                .then(resThen => {
+                    return res.redirect("/login");
+                })
+                .catch(resCatch => {
+                    return res.redirect("/forgotpassword");
+                })
+            });
+        });
+    }
+    
+}
+
 exports.Verify = (req, res) => {
     if (!validator.isObjEmpty(!req.params))
         res.render('verify', { title: AppName, status: 0, message: "An error occured, email address not varified!" });

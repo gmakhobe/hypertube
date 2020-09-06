@@ -14,6 +14,7 @@ router.get('/verify/token/:token', controllerIndexGet.Verify);
 router.post('/register', controllerIndexPost.Register);
 router.post('/forgotpassword', controllerIndexPost.ForgotPassword);
 router.post('/login', controllerIndexPost.Login);
+router.post('/passwordreset/user/change', controllerIndexGet.PasswordChange);
 
 
 module.exports = router;
