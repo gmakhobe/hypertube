@@ -61,7 +61,7 @@ exports.Register = (req, res) => {
         //Hash the password
         bcrypt.hash(password, salt, (error, hash) => {
             //Generate custome hash 
-            const customHash = Math.floor((Math.random * 999999999) + 100000000);
+            const customHash = Math.floor((Math.random() * 999999999) + 100000000);
             const sql = `INSERT INTO Users(FirstName, LastName, Username, EmailAddress, Passcode, CustomHash, Active) VALUES ("${name}", "${surname}", "${username}","${email}", "${hash}", "${customHash + username}", ${0})`;
 
             orm.INSERT(sql)
@@ -138,8 +138,7 @@ exports.Login = (req, res) => {
                         "message": `Email or Password is incorrect!`
                     });
                 }else{
-                    orm.UPDATE(`UPDATE Users SET LoginStatus = 1 WHERE Username = "${userData.Username}"`)
-                    .then(message => {
+                    
                         //Get token
                         validator.token({username: userData.Username})
                         .then(token => {
@@ -168,12 +167,6 @@ exports.Login = (req, res) => {
                                 "message": `An error occured please try again [Error is regarding JWT]: ${error}!`
                             });
                         });
-                    }).catch(message => {
-                        res.send({
-                            "status": 0,
-                            "message": `An error occured please try again [Error is regarding JWT]: ${message}!`
-                        });
-                    });
                 }
             });
         }else{
