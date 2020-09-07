@@ -84,19 +84,19 @@ exports.Register = (req, res) => {
                         console.log(message);
                     });
                     // End Close DB Connection
-                    res.send({
+                    return res.send({
                         "status": 1,
                         "message": `User was registered successful please go to your email and click verify to be able to login! !`
                     });
                 }else{
-                    res.send({
+                    return res.send({
                         "status": 0,
                         "message": `An error occured please try again with different username and or email.`
                     });
                 }
             })
             .catch(message => {
-                res.send({
+                return res.send({
                     "status": 0,
                     "message": `An error occured please try again with different username and or email.`
                 });     
@@ -110,14 +110,7 @@ exports.Login = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    if (!validator.isEmail(email)){
-        res.send({
-            "status": 0,
-            "message": "Please enter a valid email address!"
-        });
-        return ;
-    }
-    orm.SELECT(`SELECT * FROM Users WHERE EmailAddress = "${email}"`)
+    orm.SELECT(`SELECT * FROM Users WHERE EmailAddress = "${email}" OR Username = "${email}"`)
     .then(results => {
         console.log(results.length);
         if (results.length){
@@ -127,13 +120,13 @@ exports.Login = (req, res) => {
             bcrypt.compare(password, userData.Passcode, (error, result) => {
                 // Reject login if Active is 0
                 if (!userData.Active){
-                    res.send({
+                    return res.send({
                         "status": 0,
                         "message": `You need to varify your account first before you can login!!`
                     });
                 }
                 if (error || !result){
-                    res.send({
+                    return res.send({
                         "status": 0,
                         "message": `Email or Password is incorrect!`
                     });
@@ -154,7 +147,7 @@ exports.Login = (req, res) => {
                             delete userData.LoginStatus;
                             delete userData.Passcode;
                             //respond with status 1, message and output
-                             res.send({
+                            return res.send({
                                 "status": 1,
                                 "message": `Login Success, please wait you will be redirected`,
                                 "output": userData
@@ -162,7 +155,7 @@ exports.Login = (req, res) => {
                         })
                         .catch(error => {
                             // End Close DB Connection
-                            res.send({
+                            return res.send({
                                 "status": 0,
                                 "message": `An error occured please try again [Error is regarding JWT]: ${error}!`
                             });
@@ -170,7 +163,7 @@ exports.Login = (req, res) => {
                 }
             });
         }else{
-            res.send({
+            return res.send({
                 "status": 0,
                 "message": "Please enter a valid email address or password!"
             });
