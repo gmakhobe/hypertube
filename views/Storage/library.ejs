@@ -1,0 +1,104 @@
+<!-- partial:header -->
+<%- include ('admin/admin-header.ejs') %>
+<div class="container-scroller">
+  <!-- partial:top nav bar -->
+  <%- include ('admin/top-nav.ejs') %>
+  <div class="container-fluid page-body-wrapper">
+    <!-- partial:top side bar -->
+    <%- include ('admin/side-nav.ejs') %>
+    <div class="main-panel">
+      <div class="content-wrapper">
+
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+
+              <form method="POST" action="/user/library/search">
+                <input name="Name" class="form-control" type="text" placeholder="Search..." required /><br>
+                <button type="submit" class="btn btn-gradient-dark">Search for movie</button>
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+
+              <style>
+                .movie-block {
+                  text-align: center;
+                }
+              </style>
+
+              <% if (!fromSearch) { %>
+              <div class="row">
+
+                <% for (let movie of movies) { %>
+
+                <div class="col-sm-4 movie-block">
+
+                  <img class="img-thumbnail" src="<%= movie.Poster_Path %>" style="height:auto;width:100%" />
+
+                  <br>
+
+                  <h3><%= movie.Name %></h3>
+
+                  <p>
+                    Rating: <%= movie.Vote %><br>
+                    Release year: <%= movie.Date %>
+                  </p>
+
+                  <center>
+                    <button class="btn btn-gradient-info btn-block">View Movie</button>
+                  </center>
+
+                </div>
+
+                <% } %>
+              </div>
+              <% }else{ %>
+
+              <div class="row">
+
+                <% for (let movie of movies) { %>
+              
+                  <div class="col-sm-4 movie-block">
+              
+                    <img class="img-thumbnail" src="<%= movie.Poster_Path %>" style="height:auto;width:100%" />
+              
+                    <br>
+              
+                    <h3><%= movie.Name %></h3>
+              
+                    <p>
+                      Rating: <%= movie.Vote %><br>
+                      Release year: <%= movie.Date %>
+                    </p>
+              
+                    <% if (movie.Name != "No data found!"){ %>
+                    <center>
+                      <button class="btn btn-gradient-info btn-block">View Movie</button>
+                    </center>
+                    <% } %>
+              
+                  </div>
+              
+                  <% } %>
+              </div>
+
+              <% }%>
+
+            </div>
+          </div>
+        </div>
+
+        <%- include ('admin/admin-footer.ejs') %>
+      </div>
+    </div>
+  </div>
+  <%- include ('admin/load-scripts.ejs') %>
+  </body>
+
+  </html>
