@@ -5,6 +5,37 @@ const AppName = "Hypertube";
 const fetch = require('node-fetch');
 const envTheMovieDb = require('../envTheMovieDB');
 
+//Movie Video
+exports.Video = (req, res) => {
+
+    const name = req.body.Name;
+
+    fetch(`https://yts.mx/api/v2/list_movies.json?query_term=${name}`, { method: 'GET' })
+        .then(res => res.json()) // expecting a json response
+        .then(json => {
+
+            const movieID = json.data.movies[0].id;
+
+            fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${movieID}&with_cast=true&with_images=true`, { method: 'GET' })
+                .then(res => res.json()) // expecting a json response
+                .then(json => {
+
+                    const movieInfo = json.data.movie;
+
+                    return res.render('Storage/video', { title: AppName, appSection: name + " - Video", movie: movieInfo });
+
+                }).catch(message => {
+                    res.redirect("/user/library");
+                })
+
+        })
+        .catch(message => {
+            res.redirect("/user/library");
+        })
+
+    
+
+}
 //Movie Search
 exports.Library = (req, res) => {
 
@@ -30,7 +61,7 @@ exports.Library = (req, res) => {
                 });
 
                 res.render('Storage/library', { title: AppName, appSection: "Library", fromSearch: 1, movies: resData });
-            }else{
+            } else {
                 const movie1Results = json.data.movies;
                 let moviesResults = [];
 
@@ -39,7 +70,7 @@ exports.Library = (req, res) => {
                     moviesResults.push({
                         Name: movie1Results[i].title,
                         Vote: movie1Results[i].rating,
-                        Date: movie1Results[i].date_uploaded,
+                        Date: movie1Results[i].year + "-01-06",
                         Poster_Path: movie1Results[i].large_cover_image,
                         Background_Path: movie1Results[i].background_image_original,
                         Overview: movie1Results[i].description_full
@@ -51,6 +82,9 @@ exports.Library = (req, res) => {
             }
 
 
+        })
+        .catch(message => {
+            res.redirect("/user/library");
         })
 
 }

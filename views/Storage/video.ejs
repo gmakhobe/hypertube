@@ -1,0 +1,62 @@
+
+    <!-- partial:header -->
+    <%- include ('admin/admin-header.ejs') %>
+<div class="container-scroller">
+    <!-- partial:top nav bar -->
+    <%- include ('admin/top-nav.ejs') %>
+    <div class="container-fluid page-body-wrapper">
+            <!-- partial:top side bar -->
+        <%- include ('admin/side-nav.ejs') %>
+        <div class="main-panel">
+            <div class="content-wrapper">
+              <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    
+                    <div class="row">
+                      <div class="col-sm-3">
+                        <img class="img-thumbnail movie-block-img" src="<%= movie.large_cover_image %>"
+                    style="height:auto;width:100%" />
+                      </div>
+                      <div class="col-sm-9">
+                        <h3><%= movie.title %></h3>
+                        <p><%= movie.description_full %></p>
+                        <p>Release Date: <%= movie.year %>-06-25</p>
+                        <p>Runtime: <%= movie.runtime %></p>
+                        <p>Genres: 
+                          <% for (let genre of movie.genres) { %> 
+                            <%= genre %>, 
+                          <% } %>
+                        </p>
+                        <div>
+                          <h3>Cast</h3>
+                          <div class="row">
+                            <% for (let cast of movie.cast) { %> 
+                              <div class="col-sm-2">
+                                <p><%= cast.name %>, <%= cast.character_name %></p>
+                                <img class="img-thumbnail movie-block-img" src="<%= cast.url_small_image %>"
+                    style="height:auto;width:100%" />
+                              </div> 
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <%- include ('admin/admin-footer.ejs') %>
+          </div>
+    </div>
+</div>
+    <script src="/vendors/js/vendor.bundle.base.js"></script>
+    <script src="/vendors/chart.js/Chart.min.js"></script>
+    <script src="/js/off-canvas.js"></script>
+    <script src="/js/hoverable-collapse.js"></script>
+    <script src="/js/misc.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/todolist.js"></script>
+  </body>
+</html>

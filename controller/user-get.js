@@ -2,7 +2,7 @@ const AppName = "Hypertube";
 const validator = require('../assets/validators');
 const orm = require('../model/orm-model');
 const fetch = require('node-fetch');
-const envTheMovieDb = require('../envTheMovieDB');;
+const envTheMovieDb = require('../envTheMovieDB');
 //Controller method for /encounter page
 exports.Encounter = (req, res) => {
     res.render('encounter', { title: 'Matcha' });
@@ -54,7 +54,7 @@ exports.Library = (req, res) => {
                             moviesResults.push({
                                 Name: movie1Results[i].title,
                                 Vote: movie1Results[i].rating,
-                                Date: movie1Results[i].date_uploaded,
+                                Date: movie1Results[i].year + "-01-06",
                                 Poster_Path: movie1Results[i].large_cover_image,
                                 Background_Path: movie1Results[i].background_image_original,
                                 Overview: movie1Results[i].description_full
@@ -67,6 +67,7 @@ exports.Library = (req, res) => {
                     console.log(message);
                     return ;
                 })
+                
 
         });
 
