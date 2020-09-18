@@ -4,7 +4,183 @@ const bcrypt = require('bcryptjs');
 const AppName = "Hypertube";
 const fetch = require('node-fetch');
 const envTheMovieDb = require('../envTheMovieDB');
+const torrentStream = require('torrent-stream');
+const fs = require('fs');
+const rootPath = process.cwd();
 
+//Stream a movie
+exports.movieStream = (req, res) => {
+    const magnet = `${req.body.magnet}&dn=${req.body["amp;dn"]}&tr=${req.body["amp;tr"][0]}&tr=${req.body["amp;tr"][1]}&tr=${req.body["amp;tr"][2]}&tr=${req.body["amp;tr"][3]}&tr=${req.body["amp;tr"][4]}&tr=${req.body["amp;tr"][5]}&tr=${req.body["amp;tr"][6]}&tr=${req.body["amp;tr"][7]}`;
+    const movieName = req.body.MovieName;
+    const movieId = req.body.MovieID;
+    const imgURL = req.body.imgURL;
+
+    //console.log(req.body);
+
+    //console.log(`Movie Name: ${movieName}, Movie Id: ${movieId}, Magnet: ${magnet}`);
+    orm.SELECT(`SELECT * FROM Movies WHERE MovieId = '${movieId}' AND DeleteInd = 0;`)
+        .then(res1 => {
+
+            if (res1.length == 0) {
+
+                //Torrent stream init
+                const engine = torrentStream(magnet);
+                //When ready create access to files
+                engine.on('ready', () => {
+
+                    //Go through each file file
+                    engine.files.forEach(file => {
+
+                        //Create readStream
+                        const stream = file.createReadStream();
+
+                        //If the below files are found stream
+                        if (file.name.search('.mp4') >= 0 || file.name.search('.mkv') >= 0 || file.name.search('.ogv') >= 0 || file.name.search('.webm') >= 0 || file.name.search('.webvtt') >= 0) {
+
+                            //Create a directory for the video
+                            fs.mkdir('public/movies/' + file.name, { recursive: true }, (error) => {
+                                //If there is an error
+                                if (error) {
+                                    console.log("[System Permission] Failed to create movies directory");
+                                    return res.send({
+                                        status: 0,
+                                        message: "System prevented Hypertube to create directories!"
+                                    });
+                                } else {
+
+                                    console.log("Path created!");
+
+                                    let videoPath = rootPath + "/public/movies/" + file.name + "/video.mp4";
+                                    const writer = fs.createWriteStream(videoPath);
+                                    videoPath = "movies/" + file.name + "/video.mp4";
+
+                                    let indicator = 1;
+
+                                    stream.on('data', data => {
+                                        writer.write(data);
+
+                                        if (indicator < 2) {
+
+                                            //Insert path into the Movies table
+                                            orm.INSERT(`INSERT INTO Movies (MovieId, MovieName, Location, Magnet, DeleteInd, MovieURL) VALUES('${movieId}', "${movieName}", "${videoPath}", "${magnet}", 0, "${imgURL}");`)
+                                                .then(res1 => {
+
+                                                    let $Key = 0;
+
+                                                    //Set session
+                                                    if (!validator.isObjEmpty(req.session.user)) {
+                                                        //Set variable 
+                                                        $Key = req.session.user.id;
+                                                    }
+
+                                                    if (!validator.isObjEmpty(req.session.passport)) {
+                                                        //Set variable
+                                                        $Key = req.session.passport.user.id;
+                                                    }
+
+                                                    orm.INSERT(`INSERT INTO MyMovies(MovieId, UserId) VALUES('${movieId}', (SELECT UserID FROM Users WHERE EmailAddress = '${$Key}' OR IntraID = '${$Key}'))`)
+                                                    .then(res3 => {
+                                                            console.log(`${movieId} added to MyMovies`);
+                                                    })
+                                                    .catch(res3 => {
+                                                            console.log(`Failed to add ${movieId} to MyMovies`);
+
+                                                            console.log(res3);
+                                                    });
+                                                    //MyMovies
+                                                    //TableId, MovieId, MovieName, 
+
+                                                })
+                                                .catch(res2 => {
+                                                    console.log("Failed to memorise movie name");
+                                                    console.log(res2);
+                                                });
+
+                                            //Return response
+                                            res.send({
+                                                status: 1,
+                                                message: "success!",
+                                                url: videoPath
+                                            });
+
+                                            indicator++;
+                                            console.log("Movie Downloading...");
+                                        }
+                                    });
+
+                                }
+
+
+                            });
+
+                        }
+
+                    });
+
+                })
+
+            } else {
+
+                console.log("Playing already downloaded movie");
+
+                orm.SELECT(`SELECT * FROM Movies WHERE MovieId = ${movieId};`)
+                .then(res4 => {
+
+                    console.log("Sending link to user");
+
+                    //Return response
+                    res.send({
+                        status: 1,
+                        message: "success!",
+                        url: res4[0].Location
+                    });
+
+                })
+                .catch(res4 => {
+                    
+                    res.redirect('/user/library');
+
+                });
+                console.log("A movie was found!");
+            }
+
+        })
+        .catch(res1 => {
+            //If anything weird happens redirect to library
+            res.redirect('/user/library');
+        });
+}
+// Mocvie Comment
+exports.Comment = (req, res) => {
+    const comment = req.body.comment;
+    const movieid = req.body.movieid;
+
+    //Set session
+    if (!validator.isObjEmpty(req.session.user)) {
+        //Set variable 
+        $Key = req.session.user.id;
+    }
+
+    if (!validator.isObjEmpty(req.session.passport)) {
+        //Set variable
+        $Key = req.session.passport.user.id;
+    }
+
+    orm.INSERT(`INSERT INTO Comments (UserId, MovieID, Comment) VALUE((SELECT UserID FROM Users WHERE EmailAddress = '${$Key}' OR IntraID = '${$Key}'), '${movieid}', '${comment}') `)
+        .then(message => {
+            res.send({
+                status: 1,
+                message: `Comment = ${comment} & MovieId = ${movieid}`
+            });
+        })
+        .catch(message => {
+            res.send({
+                status: 0,
+                message: `Comment = ${comment} & MovieId = ${movieid}`
+            });
+        });
+
+}
 //Movie Video
 exports.Video = (req, res) => {
 
@@ -22,18 +198,54 @@ exports.Video = (req, res) => {
 
                     const movieInfo = json.data.movie;
 
-                    return res.render('Storage/video', { title: AppName, appSection: name + " - Video", movie: movieInfo });
+                    orm.SELECT(`SELECT us.FirstName, us.LastName, us.ProfilePicture, cm.Comment FROM Comments cm INNER JOIN Users us ON cm.UserId = us.UserID WHERE cm.MovieID = '${movieID}'`)
+                        .then(res1 => {
+
+                            const comments = res1;
+                            console.log(comments);
+
+                            //Default value
+                            let hash = movieInfo.torrents[0].hash;
+                            let encodedName = encodeURI(movieInfo.title);
+
+                            //Create torrent magnet
+                            const magnet = `magnet:?xt=urn:btih:${hash}&dn=${encodedName}&tr=udp://open.demonii.com:1337&tr=udp://tracker.istole.it:80&tr=http://tracker.yify-torrents.com/announce&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.coppersurfer.tk:6969&tr=udp://exodus.desync.com:6969&tr=http://exodus.desync.com:6969/announce`;
+
+                            return res.render('Storage/video', { title: AppName, appSection: name + " - Video", movie: movieInfo, Comments: comments, Magnet: magnet });
+
+                        })
+                        .catch(res1 => {
+
+                            const comments = [{
+                                FirstName: null,
+                                LastName: null,
+                                ProfilePicture: null,
+                                Comment: null
+                            }];
+                            console.log(comments);
+
+                            //Default value
+                            let hash = movieInfo.torrents[0].hash;
+                            let encodedName = encodeURI(movieInfo.title);
+
+                            //Create torrent magnet
+                            const magnet = `magnet:?xt=urn:btih:${hash}&dn=${encodedName}&tr=udp://open.demonii.com:1337&tr=udp://tracker.istole.it:80&tr=http://tracker.yify-torrents.com/announce&tr=udp://tracker.publicbt.com:80&tr=udp://tracker.openbittorrent.com:80&tr=udp://tracker.coppersurfer.tk:6969&tr=udp://exodus.desync.com:6969&tr=http://exodus.desync.com:6969/announce`;
+
+                            return res.render('Storage/video', { title: AppName, appSection: name + " - Video", movie: movieInfo, Comments: comments, Magnet: magnet });
+
+                        });
 
                 }).catch(message => {
-                    res.redirect("/user/library");
+
+                    return res.redirect("/user/library");
                 })
 
         })
         .catch(message => {
-            res.redirect("/user/library");
+            return res.redirect("/user/library");
         })
 
-    
+
 
 }
 //Movie Search

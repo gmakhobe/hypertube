@@ -23,6 +23,18 @@ exports.Settings = (req, res) => {
 //Controller method for /nearby page
 exports.Library = (req, res) => {
 
+    let $Key = 0;
+    //Set session
+    if (!validator.isObjEmpty(req.session.user)) {
+        //Set variable 
+        $Key = req.session.user.id;
+    }
+
+    if (!validator.isObjEmpty(req.session.passport)) {
+        //Set variable
+        $Key = req.session.passport.user.id;
+    }
+
     fetch(`https://api.themoviedb.org/3/trending/all/day?api_key=${envTheMovieDb}`, { method: 'GET' })
         .then(res => res.json()) // expecting a json response
         .then(json => {
@@ -48,26 +60,42 @@ exports.Library = (req, res) => {
                 .then(json => {
 
                     const movie1Results = json.data.movies;
-                    
+
                     //Loop to sort properly then push to array
                     for (let i = 0; i < movie1Results.length; i++) {
-                            moviesResults.push({
-                                Name: movie1Results[i].title,
-                                Vote: movie1Results[i].rating,
-                                Date: movie1Results[i].year + "-01-06",
-                                Poster_Path: movie1Results[i].large_cover_image,
-                                Background_Path: movie1Results[i].background_image_original,
-                                Overview: movie1Results[i].description_full
-                            });
+                        moviesResults.push({
+                            Name: movie1Results[i].title,
+                            Vote: movie1Results[i].rating,
+                            Date: movie1Results[i].year + "-01-06",
+                            Poster_Path: movie1Results[i].large_cover_image,
+                            Background_Path: movie1Results[i].background_image_original,
+                            Overview: movie1Results[i].description_full
+                        });
                     }
 
-                    res.render('Storage/library', { title: AppName, appSection: "Library", fromSearch: 0, movies: moviesResults });
+                    orm.SELECT(`SELECT m.MovieId, m.MovieName, m.MovieURL, m.DateViews FROM MyMovies mm INNER JOIN Movies m ON mm.MovieId = m.MovieId WHERE mm.UserId = (SELECT UserID FROM Users WHERE EmailAddress = '${$Key}' OR IntraID = '${$Key}')`)
+                        .then(data1 => {
+
+                            let seenMoviesArr = [];
+
+                            for (let index = 0; index < data1.length; index++){
+                                //Copy every index to a new array
+                                seenMoviesArr.push(data1[index]);
+
+                            }
+
+                            console.log(seenMoviesArr);
+
+                            res.render('Storage/library', { title: AppName, appSection: "Library", fromSearch: 0, movies: moviesResults, SeenMovies: seenMoviesArr });
+                           
+                        })
+
                 })
                 .catch(message => {
                     console.log(message);
-                    return ;
+                    return;
                 })
-                
+
 
         });
 
