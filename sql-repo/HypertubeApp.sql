@@ -7,7 +7,7 @@
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.9
 
---Create DATABASE
+-- Create DATABASE
 CREATE DATABASE HypertubeApp;
 USE HypertubeApp;
 
