@@ -12,7 +12,7 @@ const logOrInsert = (profile, cb) => {
     orm.SELECT(`SELECT * FROM Users WHERE EmailAddress = "${email}" AND IntraID = "${appID}";`)
     .then(results => {
         
-        if (results != 0){
+        if (!validator.isObjEmpty(results)){
             return cb(undefined, { id: profile.id });
         }else{
             const customHash = Math.floor((Math.random() * 999999999) + 99999999);
@@ -24,7 +24,7 @@ const logOrInsert = (profile, cb) => {
                 console.log("Inserted Data: ");
                 console.log(data0);
 
-                //Email content
+                /*//Email content
                 const mail = {
                     toUser: email,
                     subject: "Email verification | Matcha",
@@ -39,7 +39,7 @@ const logOrInsert = (profile, cb) => {
                 .catch(message => {
                     console.log("Email Logger:");
                     console.log(message);
-                });
+                });*/
 
                 return cb(undefined, { id: profile.id })
 

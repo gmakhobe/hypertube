@@ -7,7 +7,8 @@ const CheckSession = require('../middleware/CheckSession');
 /* GET method for locating pages under /User. */
 router.get('/User/Profile', CheckSession, controllerUserGet.Profile);
 router.get('/User/logout', CheckSession, controllerUserPost.Logout);
-router.get('/User/library'/*, CheckSession*/, controllerUserGet.Library);
+router.get('/User/library', CheckSession, controllerUserGet.Library);
+router.get('/user/init/mail', controllerUserGet.UserInfoInit);
 // Post Method
 router.post('/user/profile/data', CheckSession, controllerUserPost.ProfileUserData);
 router.post('/user/profile/passcode', CheckSession, controllerUserPost.ProfileUserPasscode);
@@ -16,5 +17,6 @@ router.post('/user/library/search', CheckSession, controllerUserPost.Library);
 router.post('/user/video/:name', CheckSession , controllerUserPost.Video);
 router.post('/user/comment', CheckSession , controllerUserPost.Comment);
 router.post('/user/stream', CheckSession , controllerUserPost.movieStream);
+router.post('/user/init/mail', controllerUserPost.UserInfoInit);
 
 module.exports = router;

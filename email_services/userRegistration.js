@@ -14,7 +14,7 @@ exports.sendMail = (toUser, subject, message) => {
     });
     return new Promise((resolve, reject) => {
         let info = transporter.sendMail({
-            from: '"Matcha Support" <matcha2021@gmail.com>', // sender address
+            from: '"Hypertube Support" <matcha2021@gmail.com>', // sender address
             to: toUser, // list of receivers
             subject: subject, // Subject line
             html: message, // html body});

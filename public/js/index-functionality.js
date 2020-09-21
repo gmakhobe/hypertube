@@ -5,13 +5,19 @@
  *  DO NOT INCLUDE ANY OF THE Backend FEATURES AS THEY WILL BREAK THE CODE.
  * 
  * 
- *
+ * hello"21;DROP DATABASE Hello --
 */
+//Form Validator
+const aq_formatter2 = (param) => {
+	//
+	return param.replace(/&/g, "911amp;").replace(/>/g, "911gt;").replace(/</g, "911lt;").replace(/"/g, "911quot;").replace(/'/g, "911apos");
+}
+
 //Login User Function
 function UserLogin(){
     //Get input from login page
-    const email = document.getElementById("emailaddressLogin").value;
-    const password = document.getElementById("password").value;
+    const email = aq_formatter2(document.getElementById("emailaddressLogin").value);
+    const password = aq_formatter2(document.getElementById("password").value);
     const reqbody = `email=${email}&password=${password}`;
     const btnLogin = document.getElementById('btnLogin');
     //Hide after click
@@ -63,6 +69,7 @@ function UserRegister(){
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirmpasword = document.getElementById("password2").value;
+
 
     const reqbody = `firstname=${name}&lastname=${surname}&username=${username}&email=${email}&password=${password}`;
     

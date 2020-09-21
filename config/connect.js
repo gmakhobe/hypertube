@@ -1,11 +1,18 @@
 const mysql = require('mysql');
 
-  //Create Pool Connection
-const pool = mysql.createPool({  
+const dbInfo = {
   host: "localhost",
   user: "root",
   password: "",
   database: "HypertubeApp"
+}
+
+  //Create Pool Connection
+const pool = mysql.createPool({  
+  host: dbInfo.host,
+  user: dbInfo.user,
+  password: dbInfo.password,
+  database: dbInfo.database
 });
 
 exports.dbCon = () => {
@@ -21,3 +28,5 @@ exports.dbCon = () => {
     });
   });
 }
+
+exports.dbInfoall = dbInfo; 

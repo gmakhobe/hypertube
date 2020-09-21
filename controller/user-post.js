@@ -3,11 +3,69 @@ const orm = require("../model/orm-model");
 const bcrypt = require('bcryptjs');
 const AppName = "Hypertube";
 const fetch = require('node-fetch');
-const envTheMovieDb = require('../envTheMovieDB');
 const torrentStream = require('torrent-stream');
 const fs = require('fs');
 const rootPath = process.cwd();
+const formidable = require('formidable');
 
+//Save userdata
+exports.UserInfoInit = (req, res) => {
+    let $Key = 0;
+
+    //Set session
+    if (!validator.isObjEmpty(req.session.user)) {
+        //Set variable 
+        $Key = validator.aq_formatter(req.session.user.id);
+    }
+
+    if (!validator.isObjEmpty(req.session.passport)) {
+        //Set variable
+        $Key = validator.aq_formatter(req.session.passport.user.id);
+    }
+
+    if ($Key == 0){
+        res.redirect('/');
+    }
+
+    console.log(req.body);
+    const name = validator.aq_formatter(req.body.FirstName);
+    const surname = validator.aq_formatter(req.body.LastName);
+    const EmailAddress = validator.aq_formatter(req.body.EmailAddress);
+
+    orm.SELECT(`SELECT * FROM Users WHERE EmailAddress = "null" AND IntraID = "${$Key}";`)
+    .then(data => {
+
+        //If 0 redirect
+        if (data[0].length != 0){
+
+            orm.UPDATE(`UPDATE Users SET FirstName = "${name}", LastName = "${surname}", EmailAddress = "${EmailAddress}" WHERE IntraID = "${$Key}"`)
+            .then(res1 => {
+
+                res.redirect('/user/profile');   
+
+            })
+            .catch(res1 => {
+
+                console.log(res1);
+                res.redirect('/');  
+
+            });
+
+        }else{
+
+            return res.redirect('/');
+
+        }
+
+    })
+    .catch(data => {
+
+        return res.redirect('/');
+
+    });
+
+
+}
 //Stream a movie
 exports.movieStream = (req, res) => {
     const magnet = `${req.body.magnet}&dn=${req.body["amp;dn"]}&tr=${req.body["amp;tr"][0]}&tr=${req.body["amp;tr"][1]}&tr=${req.body["amp;tr"][2]}&tr=${req.body["amp;tr"][3]}&tr=${req.body["amp;tr"][4]}&tr=${req.body["amp;tr"][5]}&tr=${req.body["amp;tr"][6]}&tr=${req.body["amp;tr"][7]}`;
@@ -79,14 +137,14 @@ exports.movieStream = (req, res) => {
                                                     }
 
                                                     orm.INSERT(`INSERT INTO MyMovies(MovieId, UserId) VALUES('${movieId}', (SELECT UserID FROM Users WHERE EmailAddress = '${$Key}' OR IntraID = '${$Key}'))`)
-                                                    .then(res3 => {
+                                                        .then(res3 => {
                                                             console.log(`${movieId} added to MyMovies`);
-                                                    })
-                                                    .catch(res3 => {
+                                                        })
+                                                        .catch(res3 => {
                                                             console.log(`Failed to add ${movieId} to MyMovies`);
 
                                                             console.log(res3);
-                                                    });
+                                                        });
                                                     //MyMovies
                                                     //TableId, MovieId, MovieName, 
 
@@ -106,6 +164,7 @@ exports.movieStream = (req, res) => {
                                             indicator++;
                                             console.log("Movie Downloading...");
                                         }
+                                        console.log("[--] Movie Downloading...");
                                     });
 
                                 }
@@ -124,23 +183,23 @@ exports.movieStream = (req, res) => {
                 console.log("Playing already downloaded movie");
 
                 orm.SELECT(`SELECT * FROM Movies WHERE MovieId = ${movieId};`)
-                .then(res4 => {
+                    .then(res4 => {
 
-                    console.log("Sending link to user");
+                        console.log("Sending link to user");
 
-                    //Return response
-                    res.send({
-                        status: 1,
-                        message: "success!",
-                        url: res4[0].Location
+                        //Return response
+                        res.send({
+                            status: 1,
+                            message: "success!",
+                            url: res4[0].Location
+                        });
+
+                    })
+                    .catch(res4 => {
+
+                        res.redirect('/user/library');
+
                     });
-
-                })
-                .catch(res4 => {
-                    
-                    res.redirect('/user/library');
-
-                });
                 console.log("A movie was found!");
             }
 
@@ -152,18 +211,18 @@ exports.movieStream = (req, res) => {
 }
 // Mocvie Comment
 exports.Comment = (req, res) => {
-    const comment = req.body.comment;
-    const movieid = req.body.movieid;
+    const comment = validator.aq_formatter(req.body.comment);
+    const movieid = validator.aq_formatter(req.body.movieid);
 
     //Set session
     if (!validator.isObjEmpty(req.session.user)) {
         //Set variable 
-        $Key = req.session.user.id;
+        $Key = validator.aq_formatter(req.session.user.id);
     }
 
     if (!validator.isObjEmpty(req.session.passport)) {
         //Set variable
-        $Key = req.session.passport.user.id;
+        $Key = validator.aq_formatter(req.session.passport.user.id);
     }
 
     orm.INSERT(`INSERT INTO Comments (UserId, MovieID, Comment) VALUE((SELECT UserID FROM Users WHERE EmailAddress = '${$Key}' OR IntraID = '${$Key}'), '${movieid}', '${comment}') `)
@@ -201,7 +260,17 @@ exports.Video = (req, res) => {
                     orm.SELECT(`SELECT us.FirstName, us.LastName, us.ProfilePicture, cm.Comment FROM Comments cm INNER JOIN Users us ON cm.UserId = us.UserID WHERE cm.MovieID = '${movieID}'`)
                         .then(res1 => {
 
-                            const comments = res1;
+                            const comments = [];
+
+                            for (let index = 0; index < res1.length; index++) {
+                                comments.push({
+                                    FirstName: validator.aq_formatter_rev(res1[index].FirstName),
+                                    LastName: validator.aq_formatter_rev(res1[index].LastName),
+                                    ProfilePicture: res1[index].ProfilePicture,
+                                    Comment: validator.aq_formatter_rev(res1[index].Comment)
+                                });
+                            }
+
                             console.log(comments);
 
                             //Default value
@@ -303,41 +372,55 @@ exports.Library = (req, res) => {
 
 //Save picture
 exports.ProfileUserPicture = (req, res) => {
-    const image = req.body.imageBase64;
-
-    if (!image) {
-        return res.redirect("/user/profile");
-    }
 
     //Set session
     if (!validator.isObjEmpty(req.session.user)) {
         //Set variable 
-        $Key = req.session.user.id;
+        $Key = validator.aq_formatter(req.session.user.id);
     }
 
     if (!validator.isObjEmpty(req.session.passport)) {
         //Set variable
-        $Key = req.session.passport.user.id;
+        $Key = validator.aq_formatter(req.session.passport.user.id);
     }
+
 
     orm.SELECT(`SELECT EmailAddress FROM Users WHERE EmailAddress = "${$Key}" OR IntraID = "${$Key}"`)
         .then(res1 => {
-
+            //Email Addres from DB
             const userEmail = res1[0].EmailAddress;
+            const form = new formidable.IncomingForm();
+            //Get form contents
+            form.parse(req, (err, fields, files) => {
+                const oldpath = files.filetoupload.path;
+                const newpath = validator.aq_formatter(`./public/uploads/${$Key}` + files.filetoupload.name);
+                const dbPath = validator.aq_formatter(`/uploads/${$Key}` + files.filetoupload.name);
+                //Log
+                console.log(newpath);
+                //Change directory
+                fs.rename(oldpath, newpath, (err) => {
+                    if (err) {
+                        //Redirect to login if server is acting up
+                        console.log("An error occured uploading Profile Picture");
+                        return res.redirect("/login");
+                    } else {
+                        //Add name to DB->Users
+                        orm.UPDATE(`UPDATE Users SET ProfilePicture = "${dbPath}" WHERE EmailAddress = "${userEmail}";`)
+                            .then(res2 => {
+                                //Success
+                                return res.redirect("/user/profile");
+                            })
+                            .catch(res2 => {
+                                //When server is acting up logout
+                                return res.redirect("/login");
+                            });
 
-            //Call ORM to update
-            orm.UPDATE(`UPDATE Users SET ProfilePicture = "${image}" WHERE EmailAddress = "${userEmail}"`)
-                .then(resThen => {
+                    }
+                });
+            });
 
-                    console.log("Success Update _____________________________");
 
-                    return res.send({
-                        status: 1
-                    })
-                })
-                .catch(resCatch => {
-                    return res.redirect("/login");
-                })
+
         })
         .catch(res1 => {
             //Redirect if there is an error
@@ -346,7 +429,7 @@ exports.ProfileUserPicture = (req, res) => {
 }
 //Save passcode
 exports.ProfileUserPasscode = (req, res) => {
-    const passcode = req.body.Passcode;
+    const passcode = validator.aq_formatter(req.body.Passcode);
 
     if (!passcode) {
         return res.redirect("/user/profile");
@@ -355,12 +438,12 @@ exports.ProfileUserPasscode = (req, res) => {
     //Set session
     if (!validator.isObjEmpty(req.session.user)) {
         //Set variable 
-        $Key = req.session.user.id;
+        $Key = validator.aq_formatter(req.session.user.id);
     }
 
     if (!validator.isObjEmpty(req.session.passport)) {
         //Set variable
-        $Key = req.session.passport.user.id;
+        $Key = validator.aq_formatter(req.session.passport.user.id);
     }
 
     orm.SELECT(`SELECT EmailAddress FROM Users WHERE EmailAddress = "${$Key}" OR IntraID = "${$Key}"`)
@@ -391,10 +474,10 @@ exports.ProfileUserPasscode = (req, res) => {
 }
 //Save user data
 exports.ProfileUserData = (req, res) => {
-    const name = req.body.Name;
-    const surname = req.body.Surname;
-    const email = req.body.Email;
-    const username = req.body.Username;
+    const name = validator.aq_formatter(req.body.Name);
+    const surname = validator.aq_formatter(req.body.Surname);
+    const email = validator.aq_formatter(req.body.Email);
+    const username = validator.aq_formatter(req.body.Username);
 
     if (!name || !surname || !email || !username) {
         return res.redirect("/user/profile");
@@ -403,12 +486,12 @@ exports.ProfileUserData = (req, res) => {
     //Set session
     if (!validator.isObjEmpty(req.session.user)) {
         //Set variable 
-        $Key = req.session.user.id;
+        $Key = validator.aq_formatter(req.session.user.id);
     }
 
     if (!validator.isObjEmpty(req.session.passport)) {
         //Set variable
-        $Key = req.session.passport.user.id;
+        $Key = validator.aq_formatter(req.session.passport.user.id);
     }
 
     orm.SELECT(`SELECT EmailAddress FROM Users WHERE EmailAddress = "${$Key}" OR IntraID = "${$Key}"`)

@@ -56,19 +56,48 @@
           <div class="card">
             <div class="card-body">
 
-              <video id="player" controls style="width:100%;height:auto;">
+              <video on id="player" controls style="width:100%;height:auto;">
                 <source src="" />
               </video>
+
+              <hr>
+
+              <h4 id="video-warning" class="alert-info">Video will be donloaded while streaming, you might see errors such as NO VIDEO WITH SUPPORTED FORMAT AND MIME TYPE FOUND, in that case our streaming engine is downloading octets from Peers and it might take a while to have a streamable bytes. Press Resume Stream to re-attach available octets to play.</h4>
 
               <hr>
 
               <center>
               <div class="btn-group btn-group-justified">
                 <a href="javascript:fetchMoviePackets()" class="btn btn-primary">Play</a>
+                <a href="javascript:ResumeStream()" class="btn btn-info">Resume Stream</a>
               </div>
             </center>
 
               <script>
+                function ResumeStream(){
+
+                  let video = document.getElementById("player");
+                  let url = video.src;
+                  video.src = url;
+
+                  alert("Link re-attached if the movie is not continuing as expected this might be due to slow download speed!");
+
+                }
+
+
+                const videoTag = document.getElementById("player");
+
+                videoTag.addEventListener("suspend", () => {
+                
+                  //alert("Video resource is being downloaded, this might be slow due to your internet or our streaming engine. Please press Resume Stream to load downloaded octets from inital octets!");
+                  console.log("Video resource is being downloaded, this might be slow due to your internet or our streaming engine. Please press Resume Stream to load downloaded octets from inital octets!");
+
+                });
+                
+                const VW = document.getElementById("video-warning");
+                  VW.style.display = "none";
+
+
                 const fetchMoviePackets = () => {
                   let magent = document.getElementById("magnet").innerHTML;
                   let movieId = document.getElementById("movieId").innerHTML;
@@ -78,6 +107,8 @@
                   movieMediaArt = encodeURI(movieMediaArt.src);
                   const reqbody = `magnet=${magent}&MovieID=${movieId}&MovieName=${movieName}&imgURL=${movieMediaArt}`;
                   const video = document.getElementById("player");
+                  const VW = document.getElementById("video-warning");
+                  VW.style.display = "inline";
 
                   alert("Please wait for a moment for stream engine to start, Press okay to proceed!");
 

@@ -11,12 +11,33 @@ const dbcon = require("./model/orm-model");
 const passport = require("passport");
 const LocalStrategy = require('passport-local').Strategy;
 const FortyTwoStrategy = require('passport-42').Strategy;
+const GitHubStrategy = require('passport-github').Strategy;
 const env = require('./env42');
+const env2 = require('./envGithub');
 const logOrInsert = require('./model/LogOrInsert');
+const findOrCreate = require('./model/FindOrCreate');
 const app = express();
 const port = 5001;
+const deleteManager = require("./model/DeleteOldMovies");
 
-//Configure strategy
+//COnfigure github strategy
+passport.use(new GitHubStrategy({
+  clientID: env2.clientID,
+  clientSecret: env2.clientSecret,
+  callbackURL: "http://localhost:5001/api/login/github/callback"
+},
+  function (accessToken, refreshToken, profile, cb) {
+    findOrCreate({
+      id: profile.id,
+      first_name: profile.displayName,
+      last_name: null,
+      username: profile.username,
+      email: profile._json.email || null
+    }, cb);
+  }
+));
+
+//Configure 42 strategy
 passport.use(new FortyTwoStrategy({
   clientID: env.clientID,
   clientSecret: env.clientSecret,
@@ -28,24 +49,24 @@ passport.use(new FortyTwoStrategy({
     'name.givenName': 'first_name',
     'emails.0.value': 'email'
   }
-},function (accessToken, refreshToken, profile, cb) {
-    logOrInsert( {
-      id: profile.id,
-      first_name: profile._json.first_name,
-      last_name: profile._json.last_name,
-      username: profile._json.login,
-      email: profile._json.email
-    }, cb);
+}, function (accessToken, refreshToken, profile, cb) {
+  logOrInsert({
+    id: profile.id,
+    first_name: profile._json.first_name,
+    last_name: profile._json.last_name,
+    username: profile._json.login,
+    email: profile._json.email
+  }, cb);
 }));
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
   cb(null, user);
 });
-  
-passport.deserializeUser(function(obj, cb) {
+
+passport.deserializeUser(function (obj, cb) {
   cb(null, obj);
 });
-  
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -69,12 +90,15 @@ app.use(passport.session());
 app.use(routesIndex);
 app.use(routesUser);
 app.use(routesApi);
+//Delete Manager
+deleteManager.DeleteOldContents();
 
 
 //Serve
-app.listen(port, () =>
+app.listen(port, () => {
+  
   console.log(`Go to http://localhost:${port} on your browser`)
-);
+});
 
 dbcon.StartConnection()
   .then(message => console.log(message))

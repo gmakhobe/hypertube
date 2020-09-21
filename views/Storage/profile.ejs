@@ -228,18 +228,20 @@
                           <img src="<%= information.ProfilePicture %>" alt="image">
                         </td>
                         <td> Upload Status </td>
+                        <form action="/user/profile/picture" method="post" enctype="multipart/form-data">
                         <td>
                           <div class="form-check form-check-flat form-check-primary">
                             <div class="custom-file">
-                              <input accept="image/*" type="file" class="custom-file-input" id="customFile">
-                              <label class="custom-file-label" for="customFile">Choose file</label>
+                              <input name="filetoupload" accept="image/*" type="file" class="custom-file-input" id="customFile">
+                              <label class="text-capitalize custom-file-label" for="customFile">Choose file</label>
                             </div>
                           </div>
                         </td>
                         <td>
-                          <button onclick="UserProfilePictureSave()"
+                          <button type="submit" id="img-upload-submit"
                             class="btn btn-link btn-rounded btn-fw">Upload</button>
                         </td>
+                      </form>
                       </tr>
 
                     </tbody>
@@ -250,16 +252,18 @@
                   </div>
 
                   <script>
-                    function UserProfilePictureSave() {
-                      const file = document.getElementById("customFile");
-                      const mainDisplay = document.getElementById("image-to-display");
+                    const uploader = document.getElementById('customFile');
+                    const submitImgBtn = document.getElementById("img-upload-submit");
+                    submitImgBtn.style.display = "none";
 
-                      if (file.files.length == 0) {
-                        alert("Please select an image to upload!");
-                        return;
-                      }
+                    uploader.addEventListener("change", () => {
+                      alert("Hello");
+                      submitImgBtn.style.display = "inline";
+                    })
 
-                      //Copy Image blob to image src
+                    
+
+                      /*//Copy Image blob to image src
                       const imageTag = document.getElementById("img-upload");
                       const imageURL = URL.createObjectURL(file.files[0]);
                       //imageTag.src = imageURL;
@@ -318,6 +322,7 @@
                                 location.assign("/user/profile");
                               } else {
                                 alert("Unexpected error occured!");
+                                location.assign("/login");
                               }
                             })
                             .catch(res => {
@@ -328,7 +333,7 @@
                         }
                       )
 
-                    }
+                    }*/
                   </script>
 
                   <br />

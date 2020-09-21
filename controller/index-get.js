@@ -30,8 +30,8 @@ exports.PasswordChange = (req, res) => {
     if (validator.isObjEmpty(req.body)){
         res.redirect('/login');
     }else{
-        const password = req.body.password;
-        const customHash = req.body.customHash;
+        const password = validator.aq_formatter(req.body.password);
+        const customHash = validator.aq_formatter(req.body.customHash);
         //Generate Salt
         bcrypt.genSalt(10, (error, salt) => {
             //Generate Hash
@@ -54,7 +54,7 @@ exports.Verify = (req, res) => {
     if (!validator.isObjEmpty(!req.params))
         res.render('verify', { title: AppName, status: 0, message: "An error occured, email address not varified!" });
     else{
-        const token = req.params.token;
+        const token = validator.aq_formatter(req.params.token);
         orm.SELECT(`SELECT * FROM Users WHERE CustomHash = "${token}"`)
         .then(results => {
             

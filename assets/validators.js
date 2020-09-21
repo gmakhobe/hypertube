@@ -45,3 +45,13 @@ exports.token = (obj) => {
         }
     });
 }
+//Convert "'&<>
+exports.aq_formatter = (param) => {
+    //Remove &><"'"
+	return param.replace(/&/g, "911amp;").replace(/>/g, "911gt;").replace(/</g, "911lt;").replace(/"/g, "911quot;").replace(/'/g, "911apos;");
+}
+//Convert rev
+exports.aq_formatter_rev = (param) => {
+	//Reinstate &><"'"
+	return param.replace(/911amp;/g, "&").replace(/911gt;/g, ">").replace(/911lt;/g, "<").replace(/911quot;/g, '"').replace(/911apos;/g, "'");
+}
